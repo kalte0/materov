@@ -15,7 +15,7 @@ dict = {} # This is the dictionary the joystick information will be put into, th
 
 async def main(): # The main loop for this function. 
 	uri = "ws://localhost:8765"
-	async with websockets.connect(uri) as websocket:
+	async with websockets.connect(uri, ping_interval=None) as websocket:
 		print("Connected")
 		while True: 
 			pygame.event.pump() # Necessary to clear past events and make pygame run
