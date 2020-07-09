@@ -1,3 +1,4 @@
+
 # usr/Documents/Github/materov/websocketServerv2.py 
 import asyncio
 import websockets
@@ -31,4 +32,3 @@ server = websockets.serve(main, "localhost", 8765, ping_interval=None) # This is
 # If you recieve a 1006 timeout error, that's a general, nondescriptive error message, like "could not open file". Probably an issue with the timeout. 
 loop = asyncio.get_event_loop() #when referring to the event loop, just call it loop to be quicker. 
 loop.run_until_complete(server) #run the above command, which starts up the websocket code. 
-loop.run_forever() #after that, just keep running things. 
