@@ -4,9 +4,10 @@ import websockets
 import json
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem142101', 9600)
+ser = serial.Serial('/dev/tty.usbmodem142301', 9600)
 
 connected = set() # Used in line of main(): connected.add(websocket).
+dummy = {"test": 1} #this is a test dictionary to be sent to the arduino. 
 
 async def main(websocket, path):
 	connected.add(websocket) # This line allows for more clients to join the same server.
@@ -14,14 +15,17 @@ async def main(websocket, path):
 	while True:
 		async for message in websocket: #I think this is a blocking function, because doesn't run after this.
 			info = await websocket.recv() #store the information recieved from the client in a variable called "info"
-			print("message receive") 
-			if ser.isOpen():
-				print("Serial is open") 
-				ser.write(b'2') # send message through serial. b'' converts to bytes. Allows passage of unicode strings. 
+			print("frm Client:{}".format(info))
+			print("frm dummy:{}".format(dummy))
+			
+			if ser.isOpen(): # This situation isn't really that great, becuase set periods, not when Serial is sent. 
+				#print("Serial is open") #Simple test print, unimportant. 
+				dataSend = json.dumps(dummy)
+				ser.write(dataSend.encode('ascii')) # send message through serial. b'' converts to bytes. Allows passage of unicode strings. 
 				ser.flush() # Wait until info is sent before moving on.
 				if (ser.in_waiting > 0): # ser.in_waiting is the number of bytes "arrived and stored in the serial receive buffer"
 					incoming = ser.readline().decode("utf-8") #Print whatever message recieved through Serial. Note: will stall the code if nothing is being sent through Serial. 
-					print(incoming) 
+					print("< {}".format(incoming)) 
 				await asyncio.sleep(0.5)
  
  
