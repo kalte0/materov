@@ -42,11 +42,11 @@ void loop() {
     Serial.print("doc[test] reads: "); 
     char what = doc["test"];
     Serial.println(what); // way to condense this with printf?
-    matrix.print(222); 
+    matrix.print(222); // strangely enough, this is still writing. There is no more whoopsie, it's just not printing through serial-- probably could be fixed through screen.  
     matrix.writeDisplay(); 
   }
 
-  //Serial.println("Still alive"); 
+  Serial.println("Still alive"); 
   delay(500); 
 }
 

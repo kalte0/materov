@@ -18,12 +18,17 @@ async def main(): # The main loop for this function.
 	async with websockets.connect(uri, ping_interval=None) as websocket:
 		print("Connected")
 		while True: 
+			for event in pygame.event.get(): 
+				if event.type == pygame.JOYAXISMOTION:
+					readval = int(1000*joystick.get_axis(0)) #Turn the axis pos into #
+					print(readval)
+					dict["axis0"] = readval  
 			pygame.event.pump() # Necessary to clear past events and make pygame run
-			dict['test'] = 1 # add a test value to the dict
+			dict["test"] = 2 # add a test value to the dict
 			joy_info = json.dumps(dict) # make json string "joy_info" with dict
 			await websocket.send(joy_info) #send info + wait until done
 			
-			await asyncio.sleep(0.5) # Maybe make delay a variable that can be more easily changed @ top of code at a later point?
+			await asyncio.sleep(0.1) # Maybe make delay a variable that can be more easily changed @ top of code at a later point?
 			
 asyncio.run(main())
 asyncio.get_event_loop().run_forever()

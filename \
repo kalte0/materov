@@ -1,0 +1,13 @@
+Before split websocketServerWorking into different goals
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   .gitignore
+#	modified:   arduinoWorking/arduinoWorking.ino
+#	modified:   joystickClientv2/joystickClientv2.py
+#	modified:   websocketServerWorking/websocketServerWorking.py
+#

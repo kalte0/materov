@@ -4,18 +4,18 @@ import websockets
 import json
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem142301', 9600)
+ser = serial.Serial('/dev/tty.usbmodem142101', 9600)
 
 connected = set() # Used in line of main(): connected.add(websocket).
 dummy = {"test": 1} #this is a test dictionary to be sent to the arduino. 
 
-async def main(websocket, path):
+async def main(websocket, path): # Rename, main is a very specific use. main calls all other functions.
 	connected.add(websocket) # This line allows for more clients to join the same server.
 	print("Connected");
-	while True:
+	while True: # don't need the while True? 
 		async for message in websocket: #I think this is a blocking function, because doesn't run after this.
 			info = await websocket.recv() #store the information recieved from the client in a variable called "info"
-			print("frm Client:{}".format(info))
+			#print("frm Client:{}".format(info))
 			print("frm dummy:{}".format(dummy))
 			
 			if ser.isOpen(): # This situation isn't really that great, becuase set periods, not when Serial is sent. 
