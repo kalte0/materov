@@ -6,6 +6,7 @@ import json
 import pygame
 import time
 
+start_time = time.monotonic() # establish the start time with global system time
 
 pygame.init() # Finds joystick, includes pygame.joystick.init()
 
@@ -17,15 +18,13 @@ dict = {} # This is the dictionary the joystick information will be put into, th
 
 
 async def main(): # The main loop for this function. 
-	timeLast = round(time.monotonic(), 4) # establish the start time with global system time
-	sent = 0
 	uri = "ws://localhost:8765"
 	async with websockets.connect(uri, ping_interval=None) as websocket:
 		print("Connected")
 		while True:
-			currentTime = round(time.monotonic(), 4)
-			#print(timeLast)
-			#print("{} seconds".format(currentTime)) 
+			current_time = round(time.monotonic() - start_time, 2) # shows the current time in millis
+			print("{} seconds".format(current_time))
+			await asyncio.sleep(0.1) 
 			for event in pygame.event.get(): # Maybe later add a small small delay to not overwhelm system w/ unnecessary information
 				if event.type == pygame.JOYAXISMOTION:
 					lst = []
@@ -35,13 +34,11 @@ async def main(): # The main loop for this function.
 						lst.append(readval)
 					dict["axis"] = lst
 					dict["test"] = 2 # add a test value to the dict
-				if (currentTime - timeLast > 0.01): #	
-					joy_info = json.dumps(dict) # make json string "joy_info" with dict
-					await websocket.send(joy_info) #send info + wait until done	
-					sent = sent + 1
-					print(sent)
-					timeLast = currentTime
-					print(dict) 
+					#print(dict) 
+				joy_info = json.dumps(dict) # make json string "joy_info" with dict
+				if (time.monotonic() - start_time > 0.2):
+					print("test")
+				await websocket.send(joy_info) #send info + wait until done	
 				pygame.event.pump() # Necessary to clear past events and make pygame run
 			
 asyncio.run(main())
