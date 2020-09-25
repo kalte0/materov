@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Web Client </title>
+    </head>
+    <body>
+        <div class = "maintext"> 
+            <div class = "body"> Insert message to server here: </div>
+            <input type = "text" class = "input" id = "input"> </input>
+            <button class = "butt" id = "butt" onclick = "sendInfo()"> Send </button>
+            <div class = "text" id = "status"> Not Connected </div>
+            <div class = "axis" id = "axis0">Axis0</div>
+            <div class = "axis" id = "axis1">Axis1</div>
+            <div class = "axis" id = "axis2">Axis2</div>
+            <div class = "axis" id = "axis3">Axis3</div>
+            <div class = "ball" id = "ballL"></div>
+            <div class = "ball" id = "ballR"> </div>
+            <p id = "insert"></p> <!-- Text to be
+                 filled w/ data -->
+        </div>
+            <iframe id = "feed" width= "1920" height= "1080" src="http://192.168.1.43:8080/stream/video.mjpeg"></iframe>
+        <script>
+           
+            var ws = new WebSocket("ws://127.0.0.1:8765"); // Connects w/ websocket
+            ws.onopen = function() { // When opened:
+                stat = document.getElementById("status"); 
+                stat.innerHTML = "Connected"; //Set the response text as "Connected"
+            }
+            ws.onmessage = function(message) { // Set "message" as object of message
+                obj = JSON.parse(message.data);
+                document.getElementById("axis0").innerHTML = obj.axis[0];
+                document.getElementById("axis1").innerHTML = obj.axis[1];
+                document.getElementById("axis2").innerHTML = obj.axis[2];
+                document.getElementById("axis3").innerHTML = obj.axis[3];
+                var L = document.getElementById("ballL");
+                var R = document.getElementById("ballR");
+                L.style.left = "$numpx".replace("$num", 200 + 0.1*obj.axis[0]);
+                L.style.top = "$numpx".replace("$num", 200 + 0.1*obj.axis[1]);
+                R.style.left = "$numpx".replace("$num", 450 + 0.1*obj.axis[2]);
+                R.style.top = "$numpx".replace("$num", 200 + 0.1*obj.axis[3]);
+                console.log(L.style.top)
+                //x.innerHTML += message.data;
+            }
+            
+            input.addEventListener("keyup", function(event) { // If there is an event in the Input:
+                if (event.keyCode ===13) { // If enter, 
+                    event.preventDefault();
+                    document.getElementById("butt").click();
+                }
+            })
+            function sendInfo() { // When the "Send" Button is clicked, activate this
+                test = input.value;
+                ws.send(test);
+            }
+        </script>
+        <style>
+            html {
+                background-color: rgb(243, 255, 246);
+            }
+            
+            .text {
+               /* font-family:helvetica, sans-serif;
+                display:flex;
+                flex-direction:column; */
+                padding:20px
+            }
+
+            .ball {
+                width: 60px; /* sizes are diameter, not radius */
+                height: 60px; 
+                position: absolute;
+                background-color: red;
+                border-radius: 100px;
+            }
+
+            #ballL {
+                left:200px; /* Axis0 */
+                top:200px; /* Axis1 */
+            }
+            #ballR {
+                left:450px; /* Axis 3 */
+                top: 200px; /* Axis 4 */
+            }
+
+            #feed {
+                position:relative;
+                padding: 200px
+
+            }
+        </style>
+    </body>
+</html>

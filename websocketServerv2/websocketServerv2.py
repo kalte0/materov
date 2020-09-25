@@ -5,7 +5,7 @@ import websockets
 import json
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem142301', 9600)
+ser = serial.Serial('/dev/tty.usbmodem141101', 9600)
 
 connected = set() # Used in line of main(): connected.add(websocket).
 

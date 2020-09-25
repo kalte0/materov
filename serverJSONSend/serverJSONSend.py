@@ -3,7 +3,7 @@ import json
 import serial
 import websockets
 
-ser = serial.Serial('/dev/tty.usbmodem141101', 9600)
+ser = serial.Serial('/dev/tty.usbmodem141301', 9600)
 
 connected = set() # Used in line of main(): connected.add(websocket).
 
@@ -13,7 +13,7 @@ dummy = {"test": 1} # basic info to be sent. (Super basic test)
 async def bucket(websocket, path):
 	sent = 0
 	connected.add(websocket)
-	print("bucket() works")
+	print(connected)
 	async for message in websocket: # if there's a message from the client. Message actually contians the information.
 		sent = sent + 1
 		print(sent)
@@ -23,8 +23,15 @@ async def bucket(websocket, path):
 		#print(json.loads(info)) # print out the python dictionary
 		ser.write(info.encode('ascii')) # write "info" down to arduino.
 		ser.flush() # Wait for everything to be sent before continuing -- will stall if nothing sent. 
-		#await asyncio.sleep(0.5) # REMOVE if message is all worky? (Ask Christy). 
-
+		for user in connected.copy(): 
+			try:
+				await user.send(message)
+			except:
+				connected.remove(user)				
+		#try:
+			#await asyncio.wait([user.send(message) for user in connected]) # try to send message to every saved user. 
+		#except: #if it cannot send to a user:
+			#connected.remove(websocket) # ISSUE: Not sure how to refer to the specific problem one. 
 async def readSerial():
 	print("readSerial() works")
 	while True:

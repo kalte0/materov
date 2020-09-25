@@ -4,20 +4,24 @@ import websockets
 import json
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem142101', 9600)
+ser = serial.Serial('/dev/tty.usbmodem141101', 9600)
 
-connected = set() # Used in line of main(): connected.add(websocket).
+connected = set() # Used in line of bucket(): connected.add(websocket).
 dummy = {"test": 1} #this is a test dictionary to be sent to the arduino. 
 
-async def main(websocket, path): # Rename, main is a very specific use. main calls all other functions.
+async def bucket(websocket, path): 
 	connected.add(websocket) # This line allows for more clients to join the same server.
 	print("Connected");
 	while True: # don't need the while True? 
 		async for message in websocket: #I think this is a blocking function, because doesn't run after this.
 			info = await websocket.recv() #store the information recieved from the client in a variable called "info"
 			#print("frm Client:{}".format(info))
-			print("frm dummy:{}".format(dummy))
-			
+			#print("frm dummy:{}".format(dummy))
+			#try:
+			#await asyncio.wait([user.send(message) for user in connected]) # try to send 
+			#print(connected)
+			#except:
+				#connected.remove(websocket)
 			if ser.isOpen(): # This situation isn't really that great, becuase set periods, not when Serial is sent. 
 				#print("Serial is open") #Simple test print, unimportant. 
 				dataSend = json.dumps(dummy)
@@ -29,7 +33,7 @@ async def main(websocket, path): # Rename, main is a very specific use. main cal
 				await asyncio.sleep(0.5)
  
  
-server = websockets.serve(main, "localhost", 8765, ping_interval=None) # This is what starts up the actual websocket code. ping_inteval is intended to make not time out-- not working correctly, though.  
+server = websockets.serve(bucket, "localhost", 8765, ping_interval=None) # This is what starts up the actual websocket code. ping_inteval is intended to make not time out-- not working correctly, though.  
 # If you recieve a 1006 timeout error, that's a general, nondescriptive error message, like "could not open file". Probably an issue with the timeout. 
 loop = asyncio.get_event_loop() #when referring to the event loop, just call it loop to be quicker. 
 loop.run_until_complete(server) #run the above command, which starts up the websocket code. 
