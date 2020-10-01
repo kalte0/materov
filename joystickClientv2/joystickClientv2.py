@@ -35,7 +35,7 @@ async def main(): # The main loop for this function.
 						lst.append(readval)
 					dict["axis"] = lst
 					dict["test"] = 2 # add a test value to the dict
-				if (currentTime - timeLast > 0.05): #	
+				if (currentTime - timeLast > 0.1): #	
 					joy_info = json.dumps(dict) # make json string "joy_info" with dict
 					await websocket.send(joy_info) #send info + wait until done	
 					sent = sent + 1

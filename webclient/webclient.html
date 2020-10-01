@@ -9,16 +9,18 @@
             <input type = "text" class = "input" id = "input"> </input>
             <button class = "butt" id = "butt" onclick = "sendInfo()"> Send </button>
             <div class = "text" id = "status"> Not Connected </div>
-            <div class = "axis" id = "axis0">Axis0</div>
-            <div class = "axis" id = "axis1">Axis1</div>
-            <div class = "axis" id = "axis2">Axis2</div>
-            <div class = "axis" id = "axis3">Axis3</div>
+            <div class = "axis_vals"> <!-- flex container in css-->
+                <div class = "axis" id = "axis0">Axis0</div>
+                <div class = "axis" id = "axis1">Axis1</div>
+                <div class = "axis" id = "axis2">Axis2</div>
+                <div class = "axis" id = "axis3">Axis3</div>
+            </div>
             <div class = "ball" id = "ballL"></div>
             <div class = "ball" id = "ballR"> </div>
             <p id = "insert"></p> <!-- Text to be
                  filled w/ data -->
         </div>
-            <iframe id = "feed" width= "1920" height= "1080" src="http://192.168.1.43:8080/stream/video.mjpeg"></iframe>
+            <iframe id = "feed" width= "1280" height= "720" src="http://192.168.1.43:8080/stream/video.mjpeg"></iframe>
         <script>
            
             var ws = new WebSocket("ws://127.0.0.1:8765"); // Connects w/ websocket
@@ -28,16 +30,19 @@
             }
             ws.onmessage = function(message) { // Set "message" as object of message
                 obj = JSON.parse(message.data);
+                /*for(i=0; i<5; i++) {
+                    document.getElementById("axis${i}").innerHTML = obj.axis[i];
+                }*/
                 document.getElementById("axis0").innerHTML = obj.axis[0];
                 document.getElementById("axis1").innerHTML = obj.axis[1];
                 document.getElementById("axis2").innerHTML = obj.axis[2];
                 document.getElementById("axis3").innerHTML = obj.axis[3];
                 var L = document.getElementById("ballL");
                 var R = document.getElementById("ballR");
-                L.style.left = "$numpx".replace("$num", 200 + 0.1*obj.axis[0]);
-                L.style.top = "$numpx".replace("$num", 200 + 0.1*obj.axis[1]);
-                R.style.left = "$numpx".replace("$num", 450 + 0.1*obj.axis[2]);
-                R.style.top = "$numpx".replace("$num", 200 + 0.1*obj.axis[3]);
+                L.style.left = "$numpx".replace("$num", 300 + 0.1*obj.axis[0]);
+                L.style.top = "$numpx".replace("$num", 110 + 0.1*obj.axis[1]);
+                R.style.left = "$numpx".replace("$num", 550 + 0.1*obj.axis[2]);
+                R.style.top = "$numpx".replace("$num", 110 + 0.1*obj.axis[3]);
                 console.log(L.style.top)
                 //x.innerHTML += message.data;
             }
@@ -72,19 +77,24 @@
                 background-color: red;
                 border-radius: 100px;
             }
+            
+            .axis_vals{
+                display:flex;
+                flex-direction:column;
+            }
 
             #ballL {
-                left:200px; /* Axis0 */
-                top:200px; /* Axis1 */
+                left:300px; /* Axis0 */
+                top:110px; /* Axis1 */
             }
             #ballR {
-                left:450px; /* Axis 3 */
-                top: 200px; /* Axis 4 */
+                left:550px; /* Axis 3 */
+                top: 110px; /* Axis 4 */
             }
 
             #feed {
                 position:relative;
-                padding: 200px
+                padding: 0px
 
             }
         </style>

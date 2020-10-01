@@ -5,13 +5,13 @@ import websockets
 import json
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem141101', 9600)
+ser = serial.Serial('/dev/tty.usbmodem142101', 9600)
 
 connected = set() # Used in line of main(): connected.add(websocket).
 
 async def main(websocket, path):
 	connected.add(websocket) # This line allows for more clients to join the same server.
-	print("Connected");
+	print("Connected")
 	while True:
 			info = await websocket.recv() #store the information recieved from the client in a variable called "info"
 			try:
