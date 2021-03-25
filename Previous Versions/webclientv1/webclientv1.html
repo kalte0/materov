@@ -20,7 +20,8 @@
             <p id = "insert"></p> <!-- Text to be
                  filled w/ data -->
         </div>
-            <iframe id = "feed" width= "1280" height= "720" src="http://192.168.1.43:8080/stream/video.mjpeg"></iframe>
+        
+        <iframe id = "feed" width= "854" height= "480" src="http://192.168.1.43:8080/stream/video.mjpeg"></iframe>
         <script>
            
             var ws = new WebSocket("ws://127.0.0.1:8765"); // Connects w/ websocket
@@ -39,8 +40,8 @@
                 document.getElementById("axis3").innerHTML = obj.axis[3];
                 var L = document.getElementById("ballL");
                 var R = document.getElementById("ballR");
-                L.style.left = "$numpx".replace("$num", 300 + 0.1*obj.axis[0]);
-                L.style.top = "$numpx".replace("$num", 110 + 0.1*obj.axis[1]);
+                L.style.left = "$numpx".replace("$num", 300 + 0.1*obj.axis[0]); // Values from Joystick range from -1000 to 1000.
+                L.style.top = "$numpx".replace("$num", 110 + 0.1*obj.axis[1]); // AKA + or - 100 from location val. 
                 R.style.left = "$numpx".replace("$num", 550 + 0.1*obj.axis[2]);
                 R.style.top = "$numpx".replace("$num", 110 + 0.1*obj.axis[3]);
                 console.log(L.style.top)
@@ -94,7 +95,8 @@
 
             #feed {
                 position:relative;
-                padding: 0px
+                padding: 0px;
+                /*border-radius: 10x;*/
 
             }
         </style>

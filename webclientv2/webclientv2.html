@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> MATE_ROV </title>
+        <link rel = "icon" href = "Rob_logo.png">
+        <style>
+            .body {
+                height: 100%;
+                width: 100%;
+
+            }
+            .nav_bar {
+                background-color: rgb(57, 88, 128);
+                display: flex;
+                flex-direction: row;
+                height: 100px;
+                width: 100%;
+                color:aliceblue;
+                font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                font-size: 14px; 
+                justify-content:flex-start;
+                position: relative;
+                margin-left:20px; 
+            
+            }
+            .nav_links{
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                width: 40%
+
+            }
+            .nav_links > div
+            { /* > div makes go to each of the children within the class .nav_links that are a div */
+                margin: 5%; 
+            }
+
+
+            .video {
+                width: 100%
+                /*height:600px; */
+            }
+
+            .video > img {
+                width: 100%
+            }
+            
+    
+            
+            .container
+            {
+                width: 100%; 
+                display: flex;
+                flex-direction: row;
+                padding:20px;
+                justify-content: center;
+                max-height: 80%
+            }
+
+            .axis_vals > div {
+                width: 150px; 
+                margin: 5px; 
+            }
+
+            .vis-feedback-container
+            {
+                display:flex;
+                flex-direction: column; 
+                width:80%;
+                max-width: 1100px;
+                
+            }
+            
+            .joy_display {
+                width: 100%; 
+                display:flex; 
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .joy_ring {
+                margin: 50px; 
+            }
+            
+            .ball {
+                width: 30px; /* sizes are diameter, not radius */
+                height: 30px; 
+                position: relative;
+                background-color: darkslateblue;
+                border-radius: 100px;
+            }
+
+            #ballL {
+                position:relative;
+                left:85px; /* centered. */
+                bottom:115px; 
+            }
+
+            #ballR {
+                position: relative;
+                left:85px; /* centered. */
+                bottom:115px; 
+               
+            }
+
+            #rob_icon {
+                height:90px;
+                width: 90px; 
+                padding:2px;
+                background-color:whitesmoke;
+                border-radius: 100px;
+            }
+
+            
+
+        </style>
+    </head>
+
+    <body>
+        <div class = "nav_bar">
+            <img alt="Robotics Icon"  id= "rob_icon" src="Rob_logo.png">
+            <div class = "nav_links"> <!-- Add links in the future -->
+                <div id = "port_info">Port info</div> 
+                <div id = "members">Club Members</div>
+                <div id = "competition_info">Competition information</div>
+           </div>
+        </div>
+        <div class = "container">
+            <div class = "axis_vals">
+                <div class = "status" id = "status"> Not Connected </div>
+
+                <div id = "axis0_label">Axis 0:</div>
+                <div id = "axis0_val"></div>
+
+                <div id = "axis1_label">Axis 1: </div>
+                <div id = "axis1_val"></div>
+
+                <div id = "axis2_label">Axis 2:</div>
+                <div id = "axis2_val"></div>
+
+                <div id = "axis3_label">Axis 3:</div>
+                <div id = "axis3_val"></div>
+            </div>
+
+            <div class = "vis-feedback-container">
+
+                <div class = "video">
+                 <img alt = "Video Feed" src="http://192.168.1.43:8080/stream/video.mjpeg"> 
+                </div>
+
+                <div class = "joy_display">
+                    <div class = "joy_ring" id = "joy_ring_L">
+                        <img  src="joy_ring.png" height = 200px id = "refRing"> 
+                        <div class = "ball" id = "ballL"></div>
+                    </div>
+                    <div class = "joy_ring" id = "joy_ring_R">
+                        <img  src="joy_ring.png" height = 200px>
+                        <div class = "ball" id = "ballR"></div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- In future, add a display for what which devices are online, and which aren't. -->
+
+        </div>
+
+        <script> 
+            var ws = new WebSocket("ws://127.0.0.1:8765"); // Connects w/ websocket
+            var ringSize = document.getElementById("refRing").height;
+            var ballSize = getComputedStyle(document.getElementById("ballL")).height; 
+            var leftMargin = (ringSize/2) - (ballSize/2)
+            ws.onopen = function() { // When opened:
+                stat = document.getElementById("status");
+                console.log("Connected");
+                stat.innerHTML = "Connected"; //Set the response text as "Connected"
+            }
+            ws.onmessage = function(message) { // Set "message" as object of message
+                obj = JSON.parse(message.data);
+                /*for(i=0; i<5; i++) {
+                    document.getElementById("axis${i}").innerHTML = obj.axis[i]; // Can't just do a get elements by class, and go down the list?? 
+                }*/
+                document.getElementById("axis0_val").innerHTML = obj.axis[0];
+                document.getElementById("axis1_val").innerHTML = obj.axis[1];
+                document.getElementById("axis2_val").innerHTML = obj.axis[2];
+                document.getElementById("axis3_val").innerHTML = obj.axis[3];
+                var L = document.getElementById("ballL");
+                var R = document.getElementById("ballR");
+                var scale = 0.07
+                
+                console.log(leftMargin);
+                L.style.left = "$numpx".replace("$num", 85 + scale*obj.axis[0]); // Values from Joystick range from -1000 to 1000.
+                L.style.bottom = "$numpx".replace("$num", 115 - scale*obj.axis[1]); // AKA + or - 100 from location val. 
+                R.style.left = "$numpx".replace("$num", 85 + scale*obj.axis[2]);
+                R.style.bottom = "$numpx".replace("$num", 115 - scale*obj.axis[3]); // in future, make 85 & 115 vals variables, so easy to change if necessary. 
+                console.log(L.style.top)
+                //x.innerHTML += message.data;
+            }
+
+        </script>
+    </body>
+
+
+    
+
+
+
+</html>
